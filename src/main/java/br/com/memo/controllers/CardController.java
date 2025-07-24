@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/decks/card")
+@RequestMapping
 @RequiredArgsConstructor
 public class CardController {
 
@@ -33,7 +33,7 @@ public class CardController {
         return ResponseEntity.ok(cardResponseList);
     }
 
-    @PostMapping("/decks/{deckId}/cards/{cardId}")
+    @PutMapping("/decks/{deckId}/cards/{cardId}")
     public ResponseEntity<CardResponse> updateCard(@PathVariable Long deckid,
                                                    @PathVariable Long cardId,
                                                    @RequestBody CardRequest request){
