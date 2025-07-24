@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: memo
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/memo
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+
+#springdoc:
+#  api-docs:
+#    path: /api/api-docs
+#  swagger-ui:
+#    path: /swagger/index.html
+
+api:
+  security:
+    token:
+        secret: "secret-key-1234567890"
+
