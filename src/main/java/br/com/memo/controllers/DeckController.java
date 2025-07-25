@@ -15,46 +15,42 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/decks")
 @RequiredArgsConstructor
 public class DeckController {
 
     private final DeckService deckService;
     private final ReviewService reviewService;
 
-    @PostMapping("/user/{userId}/decks")
-    public ResponseEntity<DeckResponse> createDeck(@PathVariable String userId, @RequestBody DeckRequest request){
-        DeckResponse newDeck = deckService.createDeck( userId, request);
+    @PostMapping
+    public ResponseEntity<DeckResponse> createDeck(@AuthenticationPrincipal User user, @RequestBody DeckRequest request){
+        DeckResponse newDeck = deckService.createDeck(user.getId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newDeck);
     }
 
-    @GetMapping("/user/{userId}/decks")
-    public ResponseEntity<List<DeckResponse>> getDeckByUser(@PathVariable String userId){
-        List<DeckResponse> decks = deckService.getDecksByUser(userId);
+    @GetMapping
+    public ResponseEntity<List<DeckResponse>> getDeckByUser(@AuthenticationPrincipal User user){
+        List<DeckResponse> decks = deckService.getDecksByUser(user.getId());
         return ResponseEntity.ok(decks);
     }
 
-    @PutMapping("/user/{userId}/decks/{deckId}")
-    public ResponseEntity<DeckResponse> updateDeck(@PathVariable String userId,
+    @PutMapping("/{deckId}")
+    public ResponseEntity<DeckResponse> updateDeck(@AuthenticationPrincipal User user,
                                                    @PathVariable Long deckId,
                                                    @RequestBody DeckRequest request){
-        DeckResponse updatedCard = deckService.updateDeck(userId, deckId, request);
+        DeckResponse updatedCard = deckService.updateDeck(user.getId(), deckId, request);
         return ResponseEntity.ok(updatedCard);
     }
 
-    @DeleteMapping("/user/{userId}/decks/{deckId}")
-    public ResponseEntity<Void> deleteDeck(@PathVariable String userId, @PathVariable Long deckId){
-        deckService.deleteDeck(userId, deckId);
+    @DeleteMapping("/{deckId}")
+    public ResponseEntity<Void> deleteDeck(@AuthenticationPrincipal User user, @PathVariable Long deckId){
+        deckService.deleteDeck(user.getId(), deckId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{deckId}/progress")
-    public DeckProgressResponse getDeckProgress(
-            @PathVariable Long deckId,
-            @AuthenticationPrincipal User user
-    ) {
+    public DeckProgressResponse getDeckProgress(@PathVariable Long deckId, @AuthenticationPrincipal User user) {
         return reviewService.getDeckProgress(deckId, user);
     }
-
-
 }
+
