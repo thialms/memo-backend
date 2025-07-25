@@ -13,7 +13,8 @@ public interface CardReviewDataRepository extends JpaRepository<CardReviewData, 
 
     Optional<CardReviewData> findByUserAndCard(User user, Card card);
 
-    List<CardReviewData> findByUserAndNextReviewLessThanEqual(User user, LocalDate nextReview);
+    List<CardReviewData> findByUserAndNextReviewLessThanEqualOrderByNextReviewAsc(User user, LocalDate date);
+
 
     List<CardReviewData> findByUserAndCardDeckId(User user, Long deckId);
 

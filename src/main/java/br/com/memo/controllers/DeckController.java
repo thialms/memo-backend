@@ -1,11 +1,15 @@
 package br.com.memo.controllers;
 
+import br.com.memo.domain.user.User;
 import br.com.memo.dto.requests.DeckRequest;
+import br.com.memo.dto.responses.DeckProgressResponse;
 import br.com.memo.dto.responses.DeckResponse;
 import br.com.memo.services.DeckService;
+import br.com.memo.services.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +20,7 @@ import java.util.List;
 public class DeckController {
 
     private final DeckService deckService;
+    private final ReviewService reviewService;
 
     @PostMapping("/user/{userId}/decks")
     public ResponseEntity<DeckResponse> createDeck(@PathVariable String userId, @RequestBody DeckRequest request){

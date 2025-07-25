@@ -7,6 +7,7 @@ import br.com.memo.domain.user.User;
 import br.com.memo.dto.responses.DeckProgressResponse;
 import br.com.memo.dto.responses.ReviewStatsResponse;
 import br.com.memo.repositories.CardReviewDataRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +21,27 @@ public class ReviewService {
     private final CardReviewDataRepository cardReviewDataRepository;
 
     public void createReviewDataForCards(User user, List<Card> cards) {
-            List<CardReviewData> cardReviewDataList = cards.stream().map(card -> new CardReviewData(
-                    null,
-                    user,
-                    card,
-                    0,
-                    2.5,
-                    0,
-                    LocalDate.now()
-            )).toList();
-            cardReviewDataRepository.saveAll(cardReviewDataList);
-        }
+        List<CardReviewData> cardReviewDataList = cards.stream()
+                .filter(card -> cardReviewDataRepository.findByUserAndCard(user, card).isEmpty())
+                .map(card -> new CardReviewData(
+                        null,
+                        user,
+                        card,
+                        0,
+                        2.5,
+                        0,
+                        LocalDate.now(),
+                        LocalDate.now()
+                )).toList();
+
+        cardReviewDataRepository.saveAll(cardReviewDataList);
+    }
 
 
     public ReviewStatsResponse reviewCard(User user, Card card, int quality) {
         CardReviewData reviewData = cardReviewDataRepository
                 .findByUserAndCard(user, card)
-                .orElseThrow(() -> new RuntimeException("Dados de revisão não encontrados"));
+                .orElseThrow(() -> new EntityNotFoundException("Dados de revisão não encontrados"));
 
         SM2Algorithm.apply(reviewData, quality);
 
@@ -53,7 +58,8 @@ public class ReviewService {
 
     public List<Card> getCardsToReviewToday(User user) {
         LocalDate today = LocalDate.now();
-        return cardReviewDataRepository.findByUserAndNextReviewLessThanEqual(user, today)
+        return cardReviewDataRepository
+                .findByUserAndNextReviewLessThanEqualOrderByNextReviewAsc(user, today)
                 .stream()
                 .map(CardReviewData::getCard)
                 .toList();
