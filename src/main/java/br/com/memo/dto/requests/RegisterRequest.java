@@ -1,4 +1,15 @@
 package br.com.memo.dto.requests;
 
-public record RegisterRequest(String name, String email, String password) {
-}
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Dados para registro de um novo usuário")
+public record RegisterRequest(
+        @Schema(description = "Nome do usuário", example = "João Silva")
+        String name,
+
+        @Schema(description = "Email do usuário", example = "joao@email.com")
+        String email,
+
+        @Schema(description = "Senha do usuário", example = "senha123")
+        String password
+) {}

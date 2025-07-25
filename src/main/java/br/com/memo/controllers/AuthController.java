@@ -6,6 +6,9 @@ import br.com.memo.dto.requests.RegisterRequest;
 import br.com.memo.dto.responses.LoginAndRegisterResponse;
 import br.com.memo.infra.security.TokenService;
 import br.com.memo.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+@Tag(name = "Autenticação", description = "Endpoints de login e registro")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -24,6 +28,9 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
+    @Operation(summary = "Login do usuário")
+    @ApiResponse(responseCode = "200", description = "Login realizado com sucesso")
+    @ApiResponse(responseCode = "400", description = "Credenciais inválidas")
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
         User user = this.userRepository.findByEmail(loginRequest.email()).orElseThrow(() -> new RuntimeException("User not found"));
@@ -34,6 +41,10 @@ public class AuthController {
         return ResponseEntity.badRequest().build();
     }
 
+
+    @Operation(summary = "Registrar novo usuário")
+    @ApiResponse(responseCode = "200", description = "Usuário registrado com sucesso")
+    @ApiResponse(responseCode = "400", description = "Usuário já existe")
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegisterRequest registerRequest) {
         Optional<User> optionalUser = this.userRepository.findByEmail(registerRequest.email());

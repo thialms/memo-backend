@@ -15,14 +15,10 @@ spring:
     show-sql: true
 
 
-#springdoc:
-#  api-docs:
-#    path: /api/api-docs
-#  swagger-ui:
-#    path: /swagger/index.html
+springdoc:
+  api-docs:
+    path: /api/api-docs
+  swagger-ui:
+    path: /swagger/index.html
 
-api:
-  security:
-    token:
-        secret: "secret-key-1234567890"
 
