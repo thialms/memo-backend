@@ -19,6 +19,7 @@ public class CardService {
     private final CardRepository cardRepository;
 
     private final DeckRepository deckRepository;
+    private final ReviewService reviewService;
 
     public CardResponse createCard(Long deckId, CardRequest request) {
         Deck deck = deckRepository.findById(deckId)
@@ -30,6 +31,8 @@ public class CardService {
         card.setDeck(deck);
 
         cardRepository.save(card);
+
+        reviewService.createReviewDataForCards(deck.getUser(), List.of(card));
 
         return new CardResponse(card.getId(), card.getFrontText(), card.getBackText());
     }
@@ -72,5 +75,4 @@ public class CardService {
 
         cardRepository.delete(card);
     }
-
 }

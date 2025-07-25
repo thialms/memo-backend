@@ -43,4 +43,13 @@ public class DeckController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{deckId}/progress")
+    public DeckProgressResponse getDeckProgress(
+            @PathVariable Long deckId,
+            @AuthenticationPrincipal User user
+    ) {
+        return reviewService.getDeckProgress(deckId, user);
+    }
+
+
 }

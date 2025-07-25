@@ -23,6 +23,8 @@ public class DeckService {
 
     public final UserRepository userRepository;
 
+    public final ReviewService reviewService;
+
     public DeckResponse createDeck(String userId, DeckRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -43,6 +45,10 @@ public class DeckService {
         }
 
         deckRepository.save(deck);
+
+        if (deck.getCards() != null && !deck.getCards().isEmpty()) {
+            reviewService.createReviewDataForCards(user, deck.getCards());
+        }
 
         List<CardResponse> cardResponses = deck.getCards() != null
                 ? deck.getCards().stream()
